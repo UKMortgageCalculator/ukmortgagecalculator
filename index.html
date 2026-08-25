@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mortgage Calculator UK — Estimate Your Monthly Repayments</title>
+  <meta name="description" content="Calculate your estimated monthly UK mortgage repayments, total interest, total repayable amount, and Loan-to-Value (LTV) ratio instantly with our free client-side tool.">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header & Navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m3 9 9-7 9 7v11a2 2 1 0 0 1-2 2H5a2 2 1 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>UK Mortgage Calculator</span>
+      </div>
+      <span class="badge">Updated for 2026</span>
+    </div>
+  </header>
+
+  <main class="main-content container">
+    <!-- Introduction Section -->
+    <section class="intro-section">
+      <h1>Estimate Your Monthly UK Mortgage Repayments</h1>
+      <p class="intro-text">
+        Use our simple UK mortgage calculator to instantly estimate your monthly repayments, compare capital repayment versus interest-only options, and analyze your overall loan breakdown. Adjust property price, deposit, rate, and term to see immediate results.
+      </p>
+    </section>
+
+    <!-- Calculator Grid Layout -->
+    <div class="calculator-card">
+      
+      <!-- Inputs Section (Left Column) -->
+      <section class="calculator-inputs" aria-labelledby="inputs-heading">
+        <h2 id="inputs-heading" class="sr-only">Mortgage Inputs</h2>
+        
+        <form id="mortgage-form" onsubmit="return false;">
+          
+          <!-- Repayment Type Toggle -->
+          <div class="form-group">
+            <label class="input-label">Repayment Type</label>
+            <div class="segmented-control" role="radiogroup" aria-label="Repayment Type">
+              <label class="segment-option">
+                <input type="radio" name="repaymentType" value="repayment" checked>
+                <span class="segment-pill">Capital &amp; Interest</span>
+              </label>
+              <label class="segment-option">
+                <input type="radio" name="repaymentType" value="interest-only">
+                <span class="segment-pill">Interest-Only</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Property Price -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="property-price" class="input-label">Property Price</label>
+            </div>
+            <div class="input-wrapper currency-wrapper">
+              <span class="input-prefix">£</span>
+              <input type="number" id="property-price" min="1000" step="1000" value="300000" required placeholder="e.g. 300,000">
+            </div>
+          </div>
+
+          <!-- Deposit Input with Mode Switch -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="deposit-input" class="input-label">Deposit Amount</label>
+              <div class="unit-toggle-group">
+                <span class="toggle-label" id="deposit-unit-label">Unit:</span>
+                <button type="button" class="unit-btn active" id="btn-unit-percent" aria-label="Deposit in Percent">%</button>
+                <button type="button" class="unit-btn" id="btn-unit-pound" aria-label="Deposit in Pounds">£</button>
+              </div>
+            </div>
+            <div class="input-wrapper percent-wrapper" id="deposit-wrapper">
+              <span class="input-prefix" id="deposit-prefix" style="display: none;">£</span>
+              <input type="number" id="deposit-input" min="0" step="0.5" value="10" required placeholder="e.g. 10">
+              <span class="input-suffix" id="deposit-suffix">%</span>
+            </div>
+            <div class="input-helper">
+              Equivalent deposit value: <strong id="deposit-equivalent-value">£30,000</strong>
+            </div>
+          </div>
+
+          <!-- Interest Rate -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="interest-rate" class="input-label">Interest Rate</label>
+            </div>
+            <div class="input-wrapper percent-wrapper">
+              <input type="number" id="interest-rate" min="0" max="25" step="0.1" value="4.5" required placeholder="e.g. 4.5">
+              <span class="input-suffix">%</span>
+            </div>
+          </div>
+
+          <!-- Mortgage Term (Dual Slider & Input) -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="mortgage-term-number" class="input-label">Mortgage Term</label>
+              <div class="term-display">
+                <input type="number" id="mortgage-term-number" min="5" max="35" step="1" value="25">
+                <span>Years</span>
+              </div>
+            </div>
+            <div class="slider-wrapper">
+              <input type="range" id="mortgage-term-slider" min="5" max="35" step="1" value="25" aria-label="Mortgage Term in Years">
+              <div class="slider-ticks">
+                <span>5 yrs</span>
+                <span>20 yrs</span>
+                <span>35 yrs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Metrics Callout in Inputs Column -->
+          <div class="inputs-summary-box">
+            <div class="stat-item">
+              <span class="stat-label">Total Loan Amount</span>
+              <span class="stat-value" id="summary-loan-amount">£270,000</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Loan-to-Value (LTV)</span>
+              <span class="stat-value highlight-badge" id="summary-ltv">90.0%</span>
+            </div>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- Results Section (Right Column) -->
+      <section class="calculator-results" aria-labelledby="results-heading" aria-live="polite">
+        <h2 id="results-heading" class="results-title">Estimated Repayments</h2>
+
+        <!-- Headline Output -->
+        <div class="headline-payment-card">
+          <span class="headline-label">Monthly Payment</span>
+          <div class="headline-amount-wrapper">
+            <span class="headline-currency">£</span>
+            <span class="headline-amount" id="output-monthly-payment">1,501</span>
+          </div>
+          <span class="headline-subtext" id="output-payment-subtext">per month for 25 years</span>
+        </div>
+
+        <!-- Interest Only Alert Note (Hidden for Repayment) -->
+        <div class="interest-only-note" id="interest-only-note" style="display: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span><strong>Note:</strong> Under an interest-only mortgage, your monthly payments cover interest only. You will still owe the full principal loan of <strong id="note-capital-owed">£270,000</strong> at the end of your term.</span>
+        </div>
+
+        <!-- Breakdown Statistics -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-card-label">Total Repayable</span>
+            <span class="stat-card-value" id="output-total-repayable">£450,266</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-label">Total Interest Paid</span>
+            <span class="stat-card-value" id="output-total-interest">£180,266</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Visual Chart (Loan vs Interest SVG Donut) -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3>Repayment Breakdown</h3>
+          </div>
+          <div class="chart-content">
+            <div class="chart-visual">
+              <svg id="breakdown-chart" viewBox="0 0 160 160" width="150" height="150">
+                <!-- Background circle -->
+                <circle cx="80" cy="80" r="62" class="chart-bg" stroke-width="22" fill="none"></circle>
+                <!-- Principal Segment -->
+                <circle id="chart-principal-segment" cx="80" cy="80" r="62" class="chart-principal" stroke-width="22" fill="none" stroke-dasharray="389.5" stroke-dashoffset="0" transform="rotate(-90 80 80)"></circle>
+                <!-- Interest Segment -->
+                <circle id="chart-interest-segment" cx="80" cy="80" r="62" class="chart-interest" stroke-width="22" fill="none" stroke-dasharray="389.5" stroke-dashoffset="233.7" transform="rotate(-90 80 80)"></circle>
+                <!-- Inner Center Text -->
+                <text x="80" y="74" text-anchor="middle" class="chart-center-title">INTEREST</text>
+                <text x="80" y="94" text-anchor="middle" class="chart-center-percent" id="chart-interest-pct">40%</text>
+              </svg>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-color color-principal"></span>
+                <div class="legend-text">
+                  <span class="legend-title">Loan Principal</span>
+                  <span class="legend-val" id="chart-principal-amount">£270,000</span>
+                </div>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color color-interest"></span>
+                <div class="legend-text">
+                  <span class="legend-title">Total Interest</span>
+                  <span class="legend-val" id="chart-interest-amount">£180,266</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <footer class="calculator-disclaimer">
+          <p>This is an estimate only and does not constitute financial advice. Actual mortgage offers depend on lender criteria.</p>
+        </footer>
+
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; 2026 UK Mortgage Calculator. Pure client-side tool, no data stored.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
